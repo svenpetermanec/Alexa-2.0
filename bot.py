@@ -8,7 +8,7 @@ from youtube_dl import YoutubeDL
 
 load_dotenv()
 
-client = commands.Bot(command_prefix = '+')
+client = commands.Bot(command_prefix = '!')
 
 @client.event
 async def on_ready():
