@@ -2,17 +2,18 @@ aiohttp==3.7.3
 appdirs==1.4.4
 async-timeout==3.0.1
 attrs==20.3.0
-beautifulsoup4==4.9.3
 certifi==2020.12.5
 cffi==1.14.4
 chardet==3.0.4
 click==7.1.2
 decorator==4.4.2
+discord.py==1.6.0
 distlib==0.3.1
 filelock==3.0.12
 idna==2.10
 importlib-metadata==3.4.0
 multidict==5.1.0
+PyAudio==0.2.11
 pycparser==2.20
 PyNaCl==1.4.0
 python-dotenv==0.15.0
@@ -20,6 +21,7 @@ requests==2.25.1
 rope==0.18.0
 six==1.15.0
 soupsieve==2.2
+SpeechRecognition==3.8.1
 typing-extensions==3.7.4.3
 urllib3==1.26.3
 validators==0.18.2

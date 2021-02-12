@@ -6,11 +6,18 @@ from discord.utils import get
 from discord import FFmpegPCMAudio
 from youtube_dl import YoutubeDL
 import validators
-import getUrlByName
+import speech_recognition as sr
+import urllib.request
+import re
 
 load_dotenv()
 
-client = commands.Bot(command_prefix = '!')
+client = commands.Bot(command_prefix = '$')
+
+def find(query):
+    html = urllib.request.urlopen("https://www.youtube.com/results?search_query=" + query)
+    video_ids = re.findall(r"watch\?v=(\S{11})", html.read().decode())
+    return "https://www.youtube.com/watch?v=" + video_ids[0]
 
 @client.event
 async def on_ready():
@@ -34,14 +41,15 @@ async def leave(ctx):
     await server.disconnect()
 
 @client.command()
-async def play(ctx, url):
+async def play(ctx, *url):
     YDL_OPTIONS = {'format': 'bestaudio', 'noplaylist':'True'}
     FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
     voice = get(client.voice_clients, guild=ctx.guild)
 
+    link = '+'.join(url)
     if not voice.is_playing():
-        if not validators.url(url):
-            url = getUrlByName.find(url)
+        if not validators.url(link):
+            url = find(link)
         with YoutubeDL(YDL_OPTIONS) as ydl:
             info = ydl.extract_info(url, download=False)
         URL = info['formats'][0]['url']
@@ -71,4 +79,23 @@ async def resume(ctx):
     voice = get(client.voice_clients, guild=ctx.guild)
     voice.resume()
 
+# this is called from the background thread
+def callback(recognizer, audio):
+    try:
+        print(recognizer.recognize_google(audio))
+    except sr.RequestError as e:  
+        print("error; {0}".format(e))
+
+    except Exception as e:
+        print (e)
+
+r = sr.Recognizer()
+m = sr.Microphone()
+with m as source:
+    r.adjust_for_ambient_noise(source)
+# start listening in the background
+stop_listening = r.listen_in_background(m, callback)
+# `stop_listening` is now a function that, when called, stops background listening
+
+# do some unrelated computations
 client.run(os.getenv("TOKEN"))
