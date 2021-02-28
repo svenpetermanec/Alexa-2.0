@@ -19,6 +19,11 @@ def find(query):
     video_ids = re.findall(r"watch\?v=(\S{11})", html.read().decode())
     return "https://www.youtube.com/watch?v=" + video_ids[0]
 
+def recogn(voiceCommand):
+    print (voiceCommand)
+    for i in voiceCommand.split():
+        print(i)
+
 @client.event
 async def on_ready():
     print('Alexa 2.0 online')
@@ -32,6 +37,8 @@ async def join(ctx):
     if ctx.author.voice is None:
         await ctx.send('You need to be in a voice channel to use this command')
     else:
+        global guild
+        guild=ctx.guild
         channel = ctx.message.author.voice.channel
         await channel.connect()
 
@@ -60,6 +67,22 @@ async def play(ctx, *url):
         await ctx.send("Already playing song")
         return
 
+def play2(url):
+    YDL_OPTIONS = {'format': 'bestaudio', 'noplaylist':'True'}
+    FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
+    voice = get(client.voice_clients, guild=guild)
+
+    #link = '+'.join(url)
+    if not voice.is_playing():
+        if not validators.url(url):
+            url = find(url)
+        with YoutubeDL(YDL_OPTIONS) as ydl:
+            info = ydl.extract_info(url, download=False)
+        URL = info['formats'][0]['url']
+        voice.play(FFmpegPCMAudio(URL, **FFMPEG_OPTIONS))
+        voice.is_playing()
+        return
+
 @client.command()
 async def clear(ctx, ammount = 2):
     await ctx.channel.purge(limit = ammount)
@@ -82,7 +105,9 @@ async def resume(ctx):
 # this is called from the background thread
 def callback(recognizer, audio):
     try:
+        #recogn(recognizer.recognize_google(audio))
         print(recognizer.recognize_google(audio))
+        play2(recognizer.recognize_google(audio))
     except sr.RequestError as e:  
         print("error; {0}".format(e))
 
