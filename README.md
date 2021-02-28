@@ -2,7 +2,7 @@
 
 ## Overview
 
-Alexa 2.0 is a Discord Music bot built with discord.py and allows command execution both via text and speech 
+Alexa 2.0 is a Discord Music bot built with discord.py and allows command execution via both text and speech 
 
 ## Instalation
 
