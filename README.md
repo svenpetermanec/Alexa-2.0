@@ -15,7 +15,7 @@ Register a new bot at https://discordapp.com/developers. Once done, open `My App
 
 ## Music text and voice commands
 
-```bash
+```sh
 $play <name/URL>
 $pause
 $resume
